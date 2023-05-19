@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Literal, Optional
+from typing import List, Optional
 from matplotlib import pyplot as plt
 import torch
 from .dp import KeyframeData

@@ -159,3 +159,20 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+allow_redefinition = true
+[[tool.mypy.overrides]]
+module = [
+    "torch.*",
+    "torchvision.*",
+    "matplotlib.*", 
+    "torchdata.*",
+    "matplotlib.*",
+
+]
+ignore_missing_imports = true
+

@@ -1,5 +1,5 @@
 from typing import List
-from orm import Keyframes
+from .orm import Keyframes
 from sqlalchemy.engine import Engine
 from sqlmodel import Session, create_engine, select
 import kuzu  # type: ignore
@@ -49,9 +49,7 @@ def _read_and_cache(sql: str, cache_dir: str, kfm_id_list: List[int]):
             rel_dict["pt"].append(kfm_keypts_pt.reshape(-1, 2).astype(np.float32))
             rel_dict["size"].append(kfm_keypts_size.reshape(-1, 1).astype(np.float32))
             rel_dict["angle"].append(kfm_keypts_angle.reshape(-1, 1).astype(np.float32))
-            rel_dict["resp"].append(
-                kfm_keypts_response.reshape(-1, 1).astype(np.float32)
-            )
+            rel_dict["resp"].append(kfm_keypts_response.reshape(-1, 1).astype(np.float32))
             rel_records.append(rel_dict)
 
             ldm_dict["id"].append(desc_ids.reshape(-1, 1))
@@ -97,9 +95,7 @@ def cache_intermediate_files(engine: Engine, cache_dir: str):
             rel_dict["pt"].append(kfm_keypts_pt.reshape(-1, 2).astype(np.float32))
             rel_dict["size"].append(kfm_keypts_size.reshape(-1, 1).astype(np.float32))
             rel_dict["angle"].append(kfm_keypts_angle.reshape(-1, 1).astype(np.float32))
-            rel_dict["resp"].append(
-                kfm_keypts_response.reshape(-1, 1).astype(np.float32)
-            )
+            rel_dict["resp"].append(kfm_keypts_response.reshape(-1, 1).astype(np.float32))
             rel_records.append(rel_dict)
 
             ldm_dict["id"].append(desc_ids.reshape(-1, 1))
@@ -117,9 +113,7 @@ def cache_intermediate_files(engine: Engine, cache_dir: str):
         for idx, rel_dict in enumerate(rel_records):  # type: ignore
             for k, v in rel_dict.items():
                 rel_dict[k] = np.vstack(v)  # type: ignore
-                rel_dict[k] = (
-                    rel_dict[k].flatten() if rel_dict[k].shape[-1] == 1 else rel_dict[k]  # type: ignore
-                )
+                rel_dict[k] = rel_dict[k].flatten() if rel_dict[k].shape[-1] == 1 else rel_dict[k]  # type: ignore
                 rel_dict[k] = rel_dict[k].tolist()  # type: ignore
             pd.DataFrame.from_dict(rel_dict).to_csv(
                 os.path.join(rel_dir, f"detects_{idx}.csv"),
@@ -136,12 +130,8 @@ def cache_intermediate_files(engine: Engine, cache_dir: str):
 
 def create_keyframe_table(db: kuzu.Database):
     conn = kuzu.Connection(db, num_threads=os.cpu_count())
-    conn.execute(
-        "CREATE NODE TABLE Landmark (id INT64, dsc INT16[32], PRIMARY KEY (id));"
-    )
-    conn.execute(
-        "CREATE NODE TABLE Keyframe (id INT64,ts DOUBLE,pose_cw FLOAT[16],PRIMARY KEY (id));"
-    )
+    conn.execute("CREATE NODE TABLE Landmark (id INT64, dsc INT16[32], PRIMARY KEY (id));")
+    conn.execute("CREATE NODE TABLE Keyframe (id INT64,ts DOUBLE,pose_cw FLOAT[16],PRIMARY KEY (id));")
     conn.execute(
         "CREATE REL TABLE Detects (FROM Keyframe TO Landmark, pt FLOAT[2], size FLOAT, angle FLOAT, resp FLOAT);"
     )
