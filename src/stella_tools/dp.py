@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Tuple
 import torch
 from sqlmodel import Session, create_engine, select, func
 from .orm import Keyframes
@@ -6,27 +6,28 @@ from .orm import Keyframes
 import numpy as np
 from torchdata.datapipes import functional_datapipe
 from torchdata.datapipes.map import MapDataPipe
+from torch import Tensor
 
 
 @functional_datapipe("keyframe_data")
 class KeyframeData(MapDataPipe):
-    def __init__(self, root, *args, **kwargs):
+    def __init__(self, root: str, *args, **kwargs) -> None:
         super().__init__()
         self.root = root
         self.engine = create_engine(f"sqlite:///{root}")
         with Session(self.engine) as session:
-            statement = select(func.count(Keyframes.id))
-            self._size = session.exec(statement).first()
+            statement = select(func.count(Keyframes.id))  # type: ignore
+            self._size: int = session.exec(statement).first()
             statement = select(Keyframes.id)
             self._ids = session.exec(statement).all()
 
-    def __reduce__(self) -> str | tuple[Any, ...]:
+    def __reduce__(self) -> Tuple[Any, ...]:
         return self.__class__, (self.root,)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._size
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int) -> Tuple[float, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         if self.engine is None:
             self.engine = create_engine(f"sqlite:///{self.root}")
         with Session(self.engine) as session:
@@ -43,10 +44,11 @@ class KeyframeData(MapDataPipe):
             )
             descs = keyframe.descs.copy()
 
-            pose_cw = torch.from_numpy(pose_cw).view(4, 4)  # type: ignore
-            kpt_locs = torch.from_numpy(kpt_locs).view(-1, 2)  # type: ignore
-            kpt_sizes = torch.from_numpy(kpt_sizes)  # type: ignore
-            kpt_angles = torch.from_numpy(kpt_angles)  # type: ignore
-            descs = torch.from_numpy(descs).view(-1, 32)  # type: ignore
+            pose_cw: Tensor = torch.from_numpy(pose_cw).view(4, 4)  # type: ignore
+            kpt_locs: Tensor = torch.from_numpy(kpt_locs).view(-1, 2)  # type: ignore
+            kpt_sizes: Tensor = torch.from_numpy(kpt_sizes)  # type: ignore
+            kpt_angles: Tensor = torch.from_numpy(kpt_angles)  # type: ignore
+            kpt_resp: Tensor = torch.from_numpy(kpt_resp)  # type: ignore
+            descs: Tensor = torch.from_numpy(descs).view(-1, 32)  # type: ignore
 
             return ts, pose_cw, kpt_locs, kpt_sizes, kpt_angles, kpt_resp, descs
