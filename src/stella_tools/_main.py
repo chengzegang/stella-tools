@@ -18,7 +18,7 @@ def main(
     db_path: str,
     out_path: str = "./*_trajectory.csv",
     out_fig: Optional[str] = "./*_trajectory.png",
-):
+) -> None:
     typer.secho(
         "✨ Welcome to the Stella-VSLAM map database trajectory extractor! 🗺️",
         fg="green",
@@ -102,3 +102,7 @@ def _save_file(timestamps: Tensor, traj: Tensor, out_path: str) -> None:
         typer.secho("saving to default .csv file", fg=typer.colors.YELLOW)
         _save_to_csv()
     typer.secho(f"Trajectory saved to {out_path}", fg=typer.colors.GREEN)
+
+
+def run() -> None:
+    app()
