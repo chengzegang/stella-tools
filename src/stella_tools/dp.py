@@ -4,8 +4,8 @@ from sqlmodel import Session, create_engine, select, func
 from .orm import Keyframes
 
 import numpy as np
-from torchdata.datapipes import functional_datapipe  # type: ignore
-from torchdata.datapipes.map import MapDataPipe  # type: ignore
+from torchdata.datapipes import functional_datapipe
+from torchdata.datapipes.map import MapDataPipe
 
 
 @functional_datapipe("keyframe_data")

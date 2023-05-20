@@ -72,7 +72,6 @@ def _plot_figure(traj: Tensor, db_name: str, out_path: str | None = None) -> Non
 
 def _save_file(timestamps: Tensor, traj: Tensor, out_path: str) -> None:
     def _save_to_csv() -> None:
-        print(len(timestamps), traj.shape)
         df = pd.DataFrame(
             {
                 "timestamp": [datetime.fromtimestamp(ts) for ts in timestamps.tolist()],

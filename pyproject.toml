@@ -22,7 +22,8 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-  'torch',
+  'torch>=1.13',
+  'torchdata',
   'numpy',
   'sqlmodel',
   'matplotlib',
@@ -31,9 +32,12 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/unknown/stella-tools#readme"
-Issues = "https://github.com/unknown/stella-tools/issues"
-Source = "https://github.com/unknown/stella-tools"
+Documentation = "https://github.com/chengzegang/stella-tools#readme"
+Issues = "https://github.com/chengzegang/stella-tools/issues"
+Source = "https://github.com/chengzegang/stella-tools"
+
+[project.scripts]
+stella = "stella_tools.__main__:app"
 
 [tool.hatch.version]
 path = "src/stella_tools/__about__.py"
@@ -149,6 +153,8 @@ omit = [
   "src/stella_tools/__about__.py",
 ]
 
+
+
 [tool.coverage.paths]
 stella_tools = ["src/stella_tools", "*/stella-tools/src/stella_tools"]
 tests = ["tests", "*/stella-tools/tests"]
@@ -172,6 +178,7 @@ module = [
     "matplotlib.*", 
     "torchdata.*",
     "matplotlib.*",
+    "torchdata.*",
 
 ]
 ignore_missing_imports = true
